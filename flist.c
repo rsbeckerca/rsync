@@ -2728,8 +2728,8 @@ int flist_find(struct file_list *flist, struct file_struct *f)
 int flist_find_name(struct file_list *flist, const char *fname, int want_dir_match)
 {
 	struct { /* We have to create a temporary file_struct for the search. */
-		struct file_struct f;
 		char name_space[MAXPATHLEN];
+		struct file_struct f;
 	} t;
 	char fbuf[MAXPATHLEN];
 	const char *slash = strrchr(fname, '/');
