@@ -1110,6 +1110,12 @@ typedef struct {
 #define NSTR_CHECKSUM 0
 #define NSTR_COMPRESS 1
 
+#if !defined __STDC_VERSION__ || __STDC_VERSION__ <= 199901L
+# define NNO_ARRAY_LEN 12 /* specify a long-enough-for-everyone len */
+#else
+# define NNO_ARRAY_LEN /* no len -- array will be sized by static initializer */
+#endif
+
 struct name_num_item {
 	int num;
 	const char *name, *main_name;
@@ -1121,7 +1127,7 @@ struct name_num_obj {
 	uchar *saw;
 	int saw_len;
 	int negotiated_num;
-	struct name_num_item list[];
+	struct name_num_item list[NNO_ARRAY_LEN];
 };
 
 #ifndef __cplusplus
