@@ -29,6 +29,10 @@
 #endif
 #include <popt.h>
 
+#if defined(__TANDEM)
+#include <floss.h(floss_execlp)>
+#endif
+
 extern int dry_run;
 extern int list_only;
 extern int io_timeout;
