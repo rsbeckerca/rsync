@@ -278,9 +278,15 @@ build_rsyncd_conf() {
     logfile="$scratchdir/rsyncd.log"
     hostname=`uname -n`
 
-    uid_setting='uid = 0'
-    gid_setting='gid = 0'
+    if [ `uname` = "NONSTOP_KERNEL" ]; then
+       uid_setting='uid = 65535'
+       gid_setting='gid = 255'
+    else
+       uid_setting='uid = 0'
+       gid_setting='gid = 0'
+    fi
     case `get_testuid` in
+    65535) ;;
     0) ;;
     *)
 	# Non-root cannot specify uid & gid settings

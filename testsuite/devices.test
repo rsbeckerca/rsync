@@ -69,6 +69,7 @@ EOF
 *)
     case `get_testuid` in
     '') ;; # If "id" failed, try to continue...
+    65535) ;;
     0)  ;;
     *)  if [ -e "$FAKEROOT_PATH" ]; then
 	    echo "Let's try re-running the script under fakeroot..."

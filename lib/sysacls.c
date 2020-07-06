@@ -767,7 +767,9 @@ int sys_acl_free_acl(SMB_ACL_T acl_d)
 
 #elif defined(HAVE_HPUX_ACLS) /*---------------------------------------------*/
 
+#ifndef __TANDEM
 #include <dl.h>
+#endif
 
 /*
  * Based on the Solaris/SCO code - with modifications.
@@ -797,7 +799,7 @@ int sys_acl_free_acl(SMB_ACL_T acl_d)
 
 static BOOL hpux_acl_call_presence(void)
 {
-
+#ifndef __TANDEM
 	shl_t handle = NULL;
 	void *value;
 	int ret_val=0;
@@ -819,6 +821,7 @@ static BOOL hpux_acl_call_presence(void)
 	DEBUG(10,("hpux_acl_call_presence: acl() system call is present. We have JFS 3.3 or above \n"));
 
 	already_checked = True;
+#endif
 	return True;
 }
 
@@ -909,11 +912,11 @@ SMB_ACL_T sys_acl_get_file(const char *path_p, SMB_ACL_TYPE_T type)
 	 * increase the number of entries between the call to
 	 * ACL_CNT and the call to ACL_GET.
 	 */
-	while ((count = acl(path_p, ACL_GET, count, &acl_d->acl[0])) < 0 && errno == ENOSPC) {
+	while ((count = acl((char *)path_p, ACL_GET, count, &acl_d->acl[0])) < 0 && errno == ENOSPC) {
 
 		sys_acl_free_acl(acl_d);
 
-		if ((count = acl(path_p, ACL_CNT, NACLENTRIES, NULL)) < 0) {
+		if ((count = acl((char *)path_p, ACL_CNT, NACLENTRIES, NULL)) < 0) {
 			return NULL;
 		}
 
@@ -1484,7 +1487,7 @@ int sys_acl_set_file(const char *name, SMB_ACL_TYPE_T type, SMB_ACL_T acl_d)
 		return -1;
 	}
 
-	ret = acl(name, ACL_SET, acl_count, acl_p);
+	ret = acl((char *)name, ACL_SET, acl_count, acl_p);
 
 	if (acl_buf) {
 		free(acl_buf);
@@ -1533,7 +1536,7 @@ int sys_acl_delete_def_file(const char *path)
 		return -1;
 	}
 
-	ret = acl(path, ACL_SET, acl_d->count, acl_d->acl);
+	ret = acl((char *)path, ACL_SET, acl_d->count, acl_d->acl);
 
 	sys_acl_free_acl(acl_d);
 	

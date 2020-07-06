@@ -295,7 +295,7 @@ const char *add_uid(uid_t uid)
 	struct idlist *node;
 	union name_or_id noiu;
 
-	if (uid == 0)	/* don't map root */
+	if (uid == SUPERUSER)	/* don't map root */
 		return NULL;
 
 	for (list = uidlist; list; list = list->next) {
@@ -304,7 +304,7 @@ const char *add_uid(uid_t uid)
 	}
 
 	noiu.name = uid_to_user(uid);
-	node = add_to_list(&uidlist, uid, noiu, 0, 0);
+	node = add_to_list(&uidlist, uid, noiu, SUPERUSER, 0);
 	return node->u.name;
 }
 
@@ -315,7 +315,7 @@ const char *add_gid(gid_t gid)
 	struct idlist *node;
 	union name_or_id noiu;
 
-	if (gid == 0)	/* don't map root */
+	if (gid == SUPERGROUP)	/* don't map root */
 		return NULL;
 
 	for (list = gidlist; list; list = list->next) {
@@ -324,7 +324,7 @@ const char *add_gid(gid_t gid)
 	}
 
 	noiu.name = gid_to_group(gid);
-	node = add_to_list(&gidlist, gid, noiu, 0, 0);
+	node = add_to_list(&gidlist, gid, noiu, SUPERGROUP, 0);
 	return node->u.name;
 }
 
@@ -503,7 +503,7 @@ void parse_name_map(char *map, BOOL usernames)
 	}
 
 	/* The 0 user/group doesn't get its name sent, so add it explicitly. */
-	recv_add_id(idlist_ptr, *idmap_ptr, 0, numeric_ids ? NULL : usernames ? uid_to_user(0) : gid_to_group(0));
+	recv_add_id(idlist_ptr, *idmap_ptr, 0, numeric_ids ? NULL : usernames ? uid_to_user(SUPERUSER) : gid_to_group(SUPERGROUP));
 }
 
 #ifdef HAVE_GETGROUPLIST

@@ -1667,7 +1667,7 @@ int main(int argc,char *argv[])
 	starttime = time(NULL);
 	our_uid = MY_UID();
 	our_gid = MY_GID();
-	am_root = our_uid == 0;
+	am_root = our_uid == SUPERUSER;
 
 	memset(&stats, 0, sizeof(stats));
 

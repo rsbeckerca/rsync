@@ -442,7 +442,10 @@ enum delret {
 #include <netdb.h>
 #endif
 #include <syslog.h>
+
+#ifndef __TANDEM /* or rather #ifdef HAVE_SYS_FILE_H */
 #include <sys/file.h>
+#endif
 
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
@@ -471,7 +474,31 @@ enum delret {
 #ifdef MAKEDEV_TAKES_3_ARGS
 #define MAKEDEV(devmajor,devminor) makedev(0,devmajor,devminor)
 #else
+#ifndef __TANDEM
 #define MAKEDEV(devmajor,devminor) makedev(devmajor,devminor)
+#else
+# include <sys/stat.h>
+# define major DEV_TO_MAJOR
+# define minor DEV_TO_MINOR
+# define MAKEDEV MAJORMINOR_TO_DEV
+#endif
+#endif
+
+#ifdef __TANDEM
+# include <floss.h(floss_read,floss_write,floss_fork,floss_execvp)>
+# include <floss.h(floss_getpwuid,floss_select,floss_seteuid)>
+# define HAVE_STRUCT_UTIMBUF /* ToDo ?! */
+# define HAVE_GETTIMEOFDAY_TZ /* ToDo ?! */
+# define S_IEXEC S_IXUSR
+# define SUPERUSER 65535
+# define SUPERGROUP 255
+# define NOBODY ((uid_t)0)
+# define NOGROUP ((gid_t)0)
+#else
+# define SUPERUSER 0
+# define SUPERGROUP 0
+# define NOBODY ((uid_t)-2) /* canonically "nobody" */
+# define NOGROUP ((gid_t)-2)
 #endif
 
 #ifdef HAVE_COMPAT_H
