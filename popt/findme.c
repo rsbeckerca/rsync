@@ -8,6 +8,7 @@
 
 #include "rsync.h"
 #include "system.h"
+#include "ifuncs.h"
 #include "findme.h"
 
 const char * findProgramPath(const char * argv0)
